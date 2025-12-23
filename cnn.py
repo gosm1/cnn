@@ -90,10 +90,12 @@ def home():
 @app.route('/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
+    # Always return 200 - model loading happens during app initialization
+    # Fly.io will check this, and with --preload, model is loaded before server starts
     return jsonify({
         'status': 'healthy',
         'model_loaded': model is not None
-    })
+    }), 200
 
 @app.route('/predict', methods=['POST'])
 def predict():

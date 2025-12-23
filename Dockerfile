@@ -39,7 +39,7 @@ COPY models/ ./models/
 # Expose port (Fly.io will set PORT env var)
 EXPOSE 8080
 
-# Use gunicorn with single worker (TensorFlow is memory intensive)
-# Increase timeout for model loading
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "4", "--timeout", "300", "--graceful-timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "cnn:app"]
+# Use gunicorn with --preload to load model before workers start
+# This ensures model is loaded before health checks begin
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "1", "--threads", "4", "--timeout", "300", "--graceful-timeout", "120", "--preload", "--access-logfile", "-", "--error-logfile", "-", "cnn:app"]
 
