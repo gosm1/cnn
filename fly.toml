@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for cnn on 2025-12-23T20:21:23Z
+# fly.toml app configuration file generated for cnn on 2025-12-23T20:35:09Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = 'cnn'
-primary_region = 'iad'
+primary_region = 'cdg'
 
 [build]
 
