@@ -5,18 +5,43 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import io
+import os
+import sys
+
+# Configure TensorFlow for production
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Reduce TensorFlow logging
+tf.get_logger().setLevel('ERROR')
+
+# Limit GPU memory growth (if GPU available)
+try:
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+except Exception as e:
+    print(f"GPU config note: {e}")
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for Flutter app
 
 # Load your trained model
+print("🔄 Loading CNN model...")
+sys.stdout.flush()
 try:
-    model = tf.keras.models.load_model('models/CNN-model.keras')
+    model_path = 'models/CNN-model.keras'
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found: {model_path}")
+    
+    model = tf.keras.models.load_model(model_path)
     print("✅ Model loaded successfully!")
     print(f"Input shape: {model.input_shape}")
     print(f"Output shape: {model.output_shape}")
+    sys.stdout.flush()
 except Exception as e:
     print(f"❌ Error loading model: {e}")
+    import traceback
+    traceback.print_exc()
+    sys.stdout.flush()
     model = None
 
 # Class names (36 fruits and vegetables)
@@ -133,6 +158,8 @@ def get_classes():
     })
 
 if __name__ == '__main__':
+    import os
+    port = int(os.environ.get('PORT', 5000))
     print("=" * 50)
     print("🍎 Fruit & Vegetable Classification API")
     print("=" * 50)
@@ -141,4 +168,4 @@ if __name__ == '__main__':
     print("=" * 50)
     
     # Run Flask app
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
