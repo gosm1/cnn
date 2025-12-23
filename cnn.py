@@ -1,4 +1,4 @@
-# app.py - Flask API for Fruit/Vegetable Classification
+# cnn.py - Flask API for Fruit/Vegetable Classification
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import tensorflow as tf
