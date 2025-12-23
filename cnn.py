@@ -24,6 +24,13 @@ except Exception as e:
 app = Flask(__name__)
 CORS(app)  # Enable CORS for Flutter app
 
+# Add request logging to debug health checks
+@app.before_request
+def log_request():
+    """Log all incoming requests"""
+    print(f"📥 {request.method} {request.path}")
+    sys.stdout.flush()
+
 # Load your trained model
 print("🔄 Loading CNN model...")
 sys.stdout.flush()
@@ -81,6 +88,8 @@ def preprocess_image(image_bytes):
 def home():
     """Home endpoint - also used as health check by Fly.io"""
     # Return 200 immediately - Fly.io checks this endpoint
+    print("✅ Health check received on /")
+    sys.stdout.flush()
     return jsonify({
         'status': 'running',
         'message': 'Fruit & Vegetable Classification API',
@@ -92,6 +101,8 @@ def home():
 @app.route('/healthz', methods=['GET'])  # Common health check path
 def health_check():
     """Health check endpoint - responds immediately"""
+    print("✅ Health check received on /health")
+    sys.stdout.flush()
     # Always return 200 - with --preload, model loads before server accepts connections
     return jsonify({
         'status': 'healthy',
