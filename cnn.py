@@ -79,19 +79,20 @@ def preprocess_image(image_bytes):
 
 @app.route('/')
 def home():
-    """Home endpoint"""
+    """Home endpoint - also used as health check by Fly.io"""
+    # Return 200 immediately - Fly.io checks this endpoint
     return jsonify({
         'status': 'running',
         'message': 'Fruit & Vegetable Classification API',
         'model_loaded': model is not None,
         'classes': len(class_names)
-    })
+    }), 200
 
 @app.route('/health', methods=['GET'])
+@app.route('/healthz', methods=['GET'])  # Common health check path
 def health_check():
-    """Health check endpoint"""
-    # Always return 200 - model loading happens during app initialization
-    # Fly.io will check this, and with --preload, model is loaded before server starts
+    """Health check endpoint - responds immediately"""
+    # Always return 200 - with --preload, model loads before server accepts connections
     return jsonify({
         'status': 'healthy',
         'model_loaded': model is not None

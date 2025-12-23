@@ -14,10 +14,18 @@ primary_region = 'cdg'
 
   # Health check configuration - important for model loading
   [[http_service.checks]]
-    grace_period = "60s"  # Give 60 seconds for model to load
-    interval = "15s"
+    grace_period = "90s"  # Give 90 seconds for model to load and worker to start
+    interval = "10s"
     method = "GET"
-    timeout = "10s"
+    timeout = "5s"
+    path = "/"
+  
+  # Alternative health check on /health endpoint
+  [[http_service.checks]]
+    grace_period = "90s"
+    interval = "10s"
+    method = "GET"
+    timeout = "5s"
     path = "/health"
 
 [[vm]]
